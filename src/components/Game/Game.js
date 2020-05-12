@@ -34,19 +34,17 @@ for (let i = deck.length - 1; i > 0; i--) {
   [deck[i], deck[j]] = [deck[j], deck[i]];
 }
 
-let playerScore = scores[deck[11].split('')[1]] + scores[deck[12].split('')[1]];
-let dealerScore = scores[deck[0].split('')[1]] + scores[deck[1].split('')[1]]
 let playerCounter = 13
-let dealerCounter = 2
+let dealerCounter = 0
 
 class Game extends Component {
   constructor() {
     super()
     this.state = {
       playerHand: [deck[11], deck[12]],
-      dealerHand: [deck[0], deck[1]],
+      dealerHand: [deck[0]],
       playerScore: scores[deck[11].split('')[1]] + scores[deck[12].split('')[1]],
-      dealerScore: scores[deck[0].split('')[1]] + scores[deck[1].split('')[1]],
+      dealerScore: scores[deck[0].split('')[1]],
       endGameMessage: '',
 
     }
@@ -58,15 +56,6 @@ class Game extends Component {
     playerCounter++
     console.log(this.state);
   }
-
-  updateScore = (newHand) => {
-      console.log(newHand);
-      playerCounter ++
-      playerScore = 0
-      newHand.forEach(card => {
-        playerScore += scores[card.split('')[1]]
-      })
-    }
 
     updateMessage = () => {
       if (this.state.endGameMessage) {
@@ -80,19 +69,25 @@ class Game extends Component {
       }
     }
 
-    calculateDealersHand = () => {
-      while (this.state.dealerScore < 17) {
-        this.setState({ dealerHand: [...this.state.dealerHand, deck[dealerCounter]] })
-        this.setState({ dealerScore: this.state.dealerScore += scores[deck[dealerCounter].split('')[1]] })
-        dealerCounter++
-      }
-    }
-
-    handleStandButtonClick = () => {
-      this.calculateDealersHand()
+    calculateDealersHand = async () => {
       if (this.state.endGameMessage) {
         return
-      }if (this.state.playerScore < this.state.dealerScore && this.state.dealerScore < 21) {
+      }
+      while (this.state.dealerScore < 17) {
+        await this.setState({ dealerHand: [...this.state.dealerHand, deck[dealerCounter]] })
+        await this.setState({ dealerScore: this.state.dealerScore += scores[deck[dealerCounter].split('')[1]] })
+        dealerCounter++
+      }
+      console.log(this.state);
+    }
+
+    handleStandButtonClick = async () => {
+      console.log(deck);
+      await this.calculateDealersHand()
+      if (this.state.endGameMessage) {
+        return
+      }
+      if (this.state.playerScore < this.state.dealerScore && this.state.dealerScore < 21) {
         this.setState({ endGameMessage: <h1>YOU WIN ! ! !</h1> })
       }
       if (this.state.playerScore > this.state.dealerScore && this.state.playerScore < 21) {
@@ -101,7 +96,6 @@ class Game extends Component {
       if (this.state.playerScore < this.state.dealerScore && this.state.dealerScore < 21) {
         this.setState({ endGameMessage: <h1>YOU SUCK ! ! !</h1> })
       }
-
     }
 
 
