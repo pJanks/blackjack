@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import PlayerHand from '../PlayerHand/PlayerHand'
 import DealerHand from '../DealerHand/DealerHand'
+import './Game.css'
 
 const suits = ['d', 's', 'h', 'c']
 const types = ['a', '2', '3', '4', '5', '6', '7', '8', '9', 't', 'j', 'q', 'k']
 const deck = []
+let playerCounter = 13
+let dealerCounter = 1
 const scores = {
-  'a': 11 || 1,
+  'a': 11,
   '2': 2,
   '3': 3,
   '4': 4,
@@ -19,8 +22,6 @@ const scores = {
   'j': 10,
   'q': 10,
   'k': 10
-
-
 }
 
 suits.forEach(suit => {
@@ -34,9 +35,6 @@ for (let i = deck.length - 1; i > 0; i--) {
   [deck[i], deck[j]] = [deck[j], deck[i]];
 }
 
-let playerCounter = 13
-let dealerCounter = 0
-
 class Game extends Component {
   constructor() {
     super()
@@ -46,66 +44,85 @@ class Game extends Component {
       playerScore: scores[deck[11].split('')[1]] + scores[deck[12].split('')[1]],
       dealerScore: scores[deck[0].split('')[1]],
       endGameMessage: '',
-
     }
   }
 
   handleHitButtonClick = () => {
+    if (this.state.playerScore > 10) {
+      scores.a = 1
+    }
+
     this.setState({ playerHand: [...this.state.playerHand, deck[playerCounter]] })
     this.setState({ playerScore: this.state.playerScore += scores[deck[playerCounter].split('')[1]] })
     playerCounter++
-    console.log(this.state);
   }
 
-    updateMessage = () => {
-      if (this.state.endGameMessage) {
-        return
-      }
-      if (this.state.playerScore === 21 && this.state.dealerScore !== 21) {
-        this.setState({ endGameMessage: <h1>BLACKJACK ! ! !</h1> })
-      }
-      if (this.state.playerScore !== 21 && this.state.dealerScore === 21) {
-        this.setState({ endGameMessage: <h1>YOU SUCK ! ! !</h1> })
-      }
+  handleStandButtonClick = async () => {
+    await this.calculateDealersHand()
+    if (this.state.endGameMessage) {
+      return
     }
 
-    calculateDealersHand = async () => {
-      if (this.state.endGameMessage) {
-        return
-      }
-      while (this.state.dealerScore < 17) {
-        await this.setState({ dealerHand: [...this.state.dealerHand, deck[dealerCounter]] })
-        await this.setState({ dealerScore: this.state.dealerScore += scores[deck[dealerCounter].split('')[1]] })
-        dealerCounter++
-      }
-      console.log(this.state);
+    if (this.state.playerScore === this.state.dealerScore && this.state.playerScore < 22){
+      this.setState({ endGameMessage: <h1>PUSH ! ! !</h1> })
     }
 
-    handleStandButtonClick = async () => {
-      console.log(deck);
-      await this.calculateDealersHand()
-      if (this.state.endGameMessage) {
-        return
-      }
-      if (this.state.playerScore < this.state.dealerScore && this.state.dealerScore < 21) {
-        this.setState({ endGameMessage: <h1>YOU WIN ! ! !</h1> })
-      }
-      if (this.state.playerScore > this.state.dealerScore && this.state.playerScore < 21) {
-        this.setState({ endGameMessage: <h1>YOU WIN ! ! !</h1> })
-      }
-      if (this.state.playerScore < this.state.dealerScore && this.state.dealerScore < 21) {
-        this.setState({ endGameMessage: <h1>YOU SUCK ! ! !</h1> })
-      }
+    if (this.state.playerScore < 21 && this.state.dealerScore > 21) {
+      this.setState({ endGameMessage: <h1>YOU WIN ! ! !</h1> })
     }
 
+    if (this.state.playerScore < this.state.dealerScore && this.state.dealerScore < 21) {
+      this.setState({ endGameMessage: <h1>YOU LOSE ! ! !</h1> })
+    }
 
+    if (this.state.playerScore > this.state.dealerScore && this.state.playerScore < 21) {
+      this.setState({ endGameMessage: <h1>YOU WIN ! ! !</h1> })
+    }
+  }
+
+  calculateDealersHand = async () => {
+    if (this.state.endGameMessage) {
+      return
+    }
+
+    scores.a = 11
+    if (this.state.dealerScore > 10) {
+      scores.a = 1
+    }
+
+    while (this.state.dealerScore < 17) {
+      await this.setState({ dealerHand: [...this.state.dealerHand, deck[dealerCounter]] })
+      await this.setState({ dealerScore: this.state.dealerScore += scores[deck[dealerCounter].split('')[1]] })
+      dealerCounter++
+    }
+  }
+
+  updateEndGameMessage = () => {
+    if (this.state.endGameMessage) {
+      return
+    }
+
+    if (this.state.playerScore > 21) {
+      this.setState({ endGameMessage: <h1>YOU LOSE ! ! !</h1> })
+    }
+
+    if (this.state.playerScore === 21 && this.state.dealerScore !== 21) {
+      this.setState({ endGameMessage: <h1>BLACKJACK ! ! !</h1> })
+    }
+
+    if (this.state.playerScore !== 21 && this.state.dealerScore === 21) {
+      this.setState({ endGameMessage: <h1>YOU LOSE ! ! !</h1> })
+    }
+  }
 
   render = () => {
-    this.updateMessage()
+    this.updateEndGameMessage()
     return (
       <main className="game-board">
       { this.state.endGameMessage }
-        <DealerHand cards={ this.state.dealerHand } />
+        <div className='hand'>
+          <DealerHand cards={ this.state.dealerHand } />
+        </div>
         <section>
           <div>{ this.state.dealerScore }</div>
           <button
@@ -116,18 +133,12 @@ class Game extends Component {
           >Stand</button>
           <div>{ this.state.playerScore }</div>
         </section>
-        <PlayerHand cards={ this.state.playerHand } />
+        <div className='hand'>
+          <PlayerHand cards={ this.state.playerHand } />
+        </div>
       </main>
     )
   }
 };
 
-
 export default Game;
-
-// need a computer hand and a player hand
-// players cards are both face up at the beginning of the game
-// dealer only shows one card at the beginning
-// player hits until blackjack, busting, or standing
-// computer will go on hitting until the score is higher than they players
-// if it isn't a bust computer wins
