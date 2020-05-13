@@ -1,0 +1,14 @@
+.game-board {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hand {
+  display: flex;
+}
+
+.all-cards {
+  margin: 2%;
+}
