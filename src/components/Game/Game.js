@@ -117,6 +117,10 @@ class Game extends Component {
 
   render = () => {
     this.updateEndGameMessage()
+    if (this.state.playerHand[0].split('')[1] === 'a' && this.state.playerHand[0].split('')[1] === 'a') {
+      this.state.playerScore = 12;
+      scores.a = 1;
+    }
     return (
       <main className="game-board">
       { this.state.endGameMessage }
