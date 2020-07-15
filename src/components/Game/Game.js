@@ -48,9 +48,14 @@ class Game extends Component {
   }
 
   handleHitButtonClick = () => {
+    if (this.state.endGameMessage) {
+      return
+    }
+
     if (this.state.playerScore > 10) {
       scores.a = 1
     }
+
     let playerScore = this.state.playerScore
     this.setState({ playerHand: [...this.state.playerHand, deck[playerCounter]] })
     this.setState({ playerScore: playerScore += scores[deck[playerCounter].split('')[1]] })
@@ -124,11 +129,10 @@ class Game extends Component {
 
   render = () => {
     this.updateEndGameMessage()
-    console.log(this.state);
-    if (this.state.playerHand[0].split('')[1] === 'a' && this.state.playerHand[1].split('')[1] === 'a') {
-      this.setState({ playerScore: 12 })
-      scores.a = 1;
-    }
+    // if (this.state.playerHand[0].split('')[1] === 'a' && this.state.playerHand[1].split('')[1] === 'a') {
+    //   this.setState({ playerScore: 12 })
+    //   scores.a = 1;
+    // }
     return (
       <main className="game-board">
       { this.state.endGameMessage }

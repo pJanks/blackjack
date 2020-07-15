@@ -5,11 +5,10 @@ const DealerHand = ({ cards, gameOver }) => {
   if (cards.length === 1) {
     cards = ['', cards[0]]
   }
-  console.log(cards);
   return cards.map(card => {
     return (
       <div key={ card } className='all-cards'>
-        <Card suit={card.split('')[0] || ''} pointValue={card.split('')[1] || ''} gameOver={ gameOver } />
+        <Card suit={card.split('')[0] || ''} pointValue={card.split('')[1] || ''} />
       </div>
     );
   });

@@ -23,3 +23,5 @@ export default App;
 // TODO: label dealer and player
 
 // TODO: add functionality to keep track of rounds won
+
+// TODO: add betting functionality
