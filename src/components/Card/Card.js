@@ -2,9 +2,12 @@ import React from 'react';
 import './Card.css'
 
 const Card = ({ suit, pointValue }) => {
+
   return (
-    <div className='card'>
-      <h1> - { suit } - { pointValue } - </h1>
+    <div className={ `card ${suit}` }>
+      <h1 className={ 'pointValue top' }>{ pointValue.toUpperCase() || '' }</h1>
+      <h1 className={ 'suit' }>{ suit.toUpperCase() }</h1>
+      <h1 className={ 'pointValue bottom' }>{ pointValue.toUpperCase() || '' }</h1>
     </div>
   );
 };
