@@ -9,7 +9,7 @@ const deck = [];
 let playerCounter = 13;
 let dealerCounter = 2;
 const scores = {
-  'a': 11 || 1,
+  'a': 11,
   '2': 2,
   '3': 3,
   '4': 4,
@@ -129,10 +129,10 @@ class Game extends Component {
 
   render = () => {
     this.updateEndGameMessage()
-    // if (this.state.playerHand[0].split('')[1] === 'a' && this.state.playerHand[1].split('')[1] === 'a') {
-    //   this.setState({ playerScore: 12 })
-    //   scores.a = 1;
-    // }
+    if (this.state.playerHand[0].split('')[1] === 'a' && this.state.playerHand[1].split('')[1] === 'a') {
+      this.setState({ playerScore: 12 })
+      scores.a = 1;
+    }
     return (
       <main className="game-board">
       { this.state.endGameMessage }
